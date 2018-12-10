@@ -36,8 +36,8 @@ namespace Nute
             var nutrients = ndh.LoadNutrients();
             var units = ndh.LoadUnits();
             var branFlakes = new Ingredient(
-                shortCode: "BFMS"
-                ,name: "Bran Flakes (M&S)"
+                shortCode: "BFMS_TEST"
+                ,name: "Bran Flakes (M&S) Test"
                 , servingSize: new Quantity(125, units[Unit.GRAM])
                 ,constituents: new List<Constituent>
                 {
@@ -104,16 +104,16 @@ namespace Nute
                 }
             );
             ndh.SaveIngredient(branFlakes);
-            dbContext.Database.CommitTransaction();
+//            dbContext.Database.CommitTransaction();
         }
 
         [Fact]
         public void Delete_Ingredient()
         {
             var ndh = new NutrientDataHandler(dbContext);
-            var ingredient = ndh.GetIngredient(5);
+            var ingredient = ndh.GetIngredient(1);
             ndh.DeleteIngredient(ingredient);
-            dbContext.Database.CommitTransaction();
+//            dbContext.Database.CommitTransaction();
         }
     }
 
