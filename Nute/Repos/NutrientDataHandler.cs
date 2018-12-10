@@ -7,7 +7,7 @@ using Version = Nute.Entities.Version;
 
 namespace Nute.Repos
 {
-    internal class NutrientDataHandler
+    public class NutrientDataHandler
     {
         private NutritionDbContext dbContext;
         public NutrientDataHandler(NutritionDbContext dbContext)
