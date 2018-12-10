@@ -1,5 +1,9 @@
 using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
+using Microsoft.Extensions.Options;
 using Nute.Common;
 using Nute.Entities;
 using Version = Nute.Entities.Version;
@@ -12,6 +16,13 @@ namespace Nute
 {
     public class NutritionDbContext : DbContext
     {
+        public static readonly LoggerFactory ctxLoggerFactory
+            = new LoggerFactory();
+/*
+        new[] { new ConsoleLoggerProvider((category, level)
+           => category == DbLoggerCategory.Database.Command.Name
+              && level == LogLevel.Information,true)});
+*/
         // needed for design time
         public NutritionDbContext()
         {
@@ -20,8 +31,20 @@ namespace Nute
         
         protected override void OnConfiguring(DbContextOptionsBuilder ob)
         {
+            var sc = new ServiceCollection();
+            sc.AddLogging(
+                opts =>
+                {
+                    opts.SetMinimumLevel(LogLevel.Information);
+                    opts.AddConsole();
+                });
+            var sp = sc.BuildServiceProvider();
+            var lf = (ILoggerFactory)sp.GetService(typeof(ILoggerFactory));
+//            var opts = new OptionsMonitor<ConsoleLoggerOptions>();
+            ob.UseLoggerFactory(lf);
             ob.UseSqlServer(
-                "Server=localhost,1401;Database=nutrition;User Id=sa;Password=M1cromus");
+                "Server=localhost,1401;Database=nutrition;User Id=sa;Password=M1cromus")
+                .EnableSensitiveDataLogging();
         }
 
         protected override void OnModelCreating(ModelBuilder mb)
