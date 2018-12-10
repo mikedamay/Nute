@@ -35,7 +35,31 @@ namespace Nute
             var ndh = new NutrientDataHandler(dbContext);
             var nutrients = ndh.LoadNutrients();
             var units = ndh.LoadUnits();
-            var branFlakes = new Ingredient(
+            var branFlakes = CreateIngredient("BF1", "Bran Flakes T1"
+                , nutrients, units);
+            ndh.SaveIngredient(branFlakes);
+            dbContext.Database.RollbackTransaction();
+        }
+
+        [Fact]
+        public void Delete_Ingredient()
+        {
+            var ndh = new NutrientDataHandler(dbContext);
+            var nutrients = ndh.LoadNutrients();
+            var units = ndh.LoadUnits();
+            var branFlakes = CreateIngredient("BF2", "Bran Flakes T2"
+              , nutrients, units);
+            ndh.SaveIngredient(branFlakes);
+            var ingredient = ndh.GetIngredient(branFlakes.Id);
+            ndh.DeleteIngredient(ingredient);
+            dbContext.Database.RollbackTransaction();
+        }
+
+      private Ingredient CreateIngredient(string shortCode, string name
+        , IReadOnlyDictionary<string, Nutrient> nutrients
+        , IReadOnlyDictionary<string, Unit> units)
+      {
+            var ingredient = new Ingredient(
                 shortCode: "BFMS_TEST"
                 ,name: "Bran Flakes (M&S) Test"
                 , servingSize: new Quantity(125, units[Unit.GRAM])
@@ -103,18 +127,8 @@ namespace Nute
                       ,servingSize: new Quantity(100, units[Unit.GRAM]) ),                                            
                 }
             );
-            ndh.SaveIngredient(branFlakes);
-//            dbContext.Database.CommitTransaction();
-        }
-
-        [Fact]
-        public void Delete_Ingredient()
-        {
-            var ndh = new NutrientDataHandler(dbContext);
-            var ingredient = ndh.GetIngredient(1);
-            ndh.DeleteIngredient(ingredient);
-//            dbContext.Database.CommitTransaction();
-        }
+        return ingredient;
+      }
     }
 
     public static class TestConstants
