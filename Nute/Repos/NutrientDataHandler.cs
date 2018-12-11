@@ -62,7 +62,7 @@ namespace Nute.Repos
         public Ingredient GetIngredient(long id)
         {
             return dbContext.Ingredient
-                .Include("Constituents.Nutrient")
+                .Include(i => i.Constituents).ThenInclude(c => c.Nutrient)
                 .FirstOrDefault(i => i.Id == id);
         }
 

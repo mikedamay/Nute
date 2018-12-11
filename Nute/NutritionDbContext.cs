@@ -16,20 +16,21 @@ namespace Nute
 {
     public class NutritionDbContext : DbContext
     {
-        public static readonly LoggerFactory ctxLoggerFactory
-            = new LoggerFactory();
-/*
-        new[] { new ConsoleLoggerProvider((category, level)
-           => category == DbLoggerCategory.Database.Command.Name
-              && level == LogLevel.Information,true)});
-*/
-        // needed for design time
         public NutritionDbContext()
         {
             this.ChangeTracker.AutoDetectChangesEnabled = false;
         }
         
         protected override void OnConfiguring(DbContextOptionsBuilder ob)
+        {
+            var lf = CreateLoggerFactoryUsingDI();
+            ob.UseLoggerFactory(lf);
+            ob.UseSqlServer(
+                "Server=localhost,1401;Database=nutrition;User Id=sa;Password=M1cromus")
+                .EnableSensitiveDataLogging();
+        }
+
+        private static ILoggerFactory CreateLoggerFactoryUsingDI()
         {
             var sc = new ServiceCollection();
             sc.AddLogging(
@@ -39,12 +40,18 @@ namespace Nute
                     opts.AddConsole();
                 });
             var sp = sc.BuildServiceProvider();
-            var lf = (ILoggerFactory)sp.GetService(typeof(ILoggerFactory));
-//            var opts = new OptionsMonitor<ConsoleLoggerOptions>();
-            ob.UseLoggerFactory(lf);
-            ob.UseSqlServer(
-                "Server=localhost,1401;Database=nutrition;User Id=sa;Password=M1cromus")
-                .EnableSensitiveDataLogging();
+            var lf = (ILoggerFactory) sp.GetService(typeof(ILoggerFactory));
+            return lf;
+        }
+
+        private static ILoggerFactory CreateLoggerFactory()
+        {
+            var of = new OptionsFactory<ConsoleLoggerOptions>();
+            
+            var om = new OptionsMonitor<ConsoleLoggerOptions>(of, null, null);
+            var lf = new LoggerFactory(
+                new [] {new ConsoleLoggerProvider(om) });
+            return lf;
         }
 
         protected override void OnModelCreating(ModelBuilder mb)
@@ -197,5 +204,13 @@ namespace Nute
         public DbSet<BodyType> BodyType { get; set; }
         public DbSet<Constituent> Constituent { get; set; }
         public DbSet<Ingredient> Ingredient { get; set; }
+    }
+
+    public class OptionsFactory<T> : IOptionsFactory<T> where T : class, new()
+    {
+        public T Create(string name)
+        {
+            return new T();
+        }
     }
 }
