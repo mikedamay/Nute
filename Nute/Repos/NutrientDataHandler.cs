@@ -50,10 +50,10 @@ namespace Nute.Repos
 
         public void SaveIngredient(Ingredient ingredient)
         {
-            foreach (var constituent in ingredient.Constituents)
-            {
-                dbContext.Constituent.Add(constituent);
-            }
+//            foreach (var constituent in ingredient.Constituents)
+//            {
+//                dbContext.Constituent.Add(constituent);
+//            }
 
             dbContext.Ingredient.Add(ingredient);
             dbContext.SaveChanges();
