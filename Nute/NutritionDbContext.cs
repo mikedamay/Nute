@@ -14,7 +14,7 @@ using Version = Nute.Entities.Version;
 
 namespace Nute
 {
-    public class NutritionDbContext : DbContext
+    public class NutritionDbContext : DbContextBase
     {
         public NutritionDbContext()
         {
@@ -25,14 +25,7 @@ namespace Nute
         {
             var lf = CreateLoggerFactoryUsingDI();
             ob.UseLoggerFactory(lf);
-            ob.UseSqlServer(
-                "Server=(localdb)\\mssqllocaldb;Database=nutrition;Trusted_Connection=True;MultipleActiveResultSets=True")
-                .EnableSensitiveDataLogging();
-/*
-            ob.UseSqlServer(
-                "Server=localhost,1401;Database=nutrition;User Id=sa;Password=M1cromus")
-                .EnableSensitiveDataLogging();
-*/
+            base.OnConfiguring(ob);
         }
 
         private static ILoggerFactory CreateLoggerFactoryUsingDI()
