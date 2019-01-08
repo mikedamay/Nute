@@ -12,6 +12,7 @@ namespace NuteRunner
             var dbContext = new NutritionDbContext();
             dbContext.Database.EnsureCreated();
             dbContext.Database.Migrate();
+            new CustomSqlDbContext().Database.Migrate();
             var ndh = new NutrientDataHandler(dbContext);
             var nutrients = ndh.LoadNutrients();
             var units = ndh.LoadUnits();

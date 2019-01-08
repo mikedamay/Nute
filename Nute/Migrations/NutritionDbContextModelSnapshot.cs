@@ -233,7 +233,7 @@ namespace Nute.Migrations
                     b.ToTable("Version");
 
                     b.HasData(
-                        new { Id = 1L, SequenceNumber = 1, StartDate = new DateTime(2019, 1, 5, 0, 0, 0, 0, DateTimeKind.Local) }
+                        new { Id = 1L, SequenceNumber = 1, StartDate = new DateTime(2019, 1, 8, 0, 0, 0, 0, DateTimeKind.Local) }
                     );
                 });
 

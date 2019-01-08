@@ -18,6 +18,7 @@ namespace Nute
             dbContext = new NutritionDbContext();
             dbContext.Database.EnsureCreated();
             dbContext.Database.Migrate();
+            new CustomSqlDbContext().Database.Migrate();
             dbContext.Database.BeginTransaction();
         }
 
