@@ -202,6 +202,8 @@ namespace Nute
         public DbSet<BodyType> BodyType { get; set; }
         public DbSet<Constituent> Constituent { get; set; }
         public DbSet<Ingredient> Ingredient { get; set; }
+        public DbSet<Meal> Meal { get; set; }
+        public DbSet<MealTime> MealTime { get; set; }
     }
 
     public class OptionsFactory<T> : IOptionsFactory<T> where T : class, new()

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Nute.Common;
@@ -12,7 +13,7 @@ namespace Nute
         {
             var os = new StdOSDetector().DetectOS();
             IConfigurationBuilder cb = new ConfigurationBuilder();
-            cb.SetBasePath(Directory.GetCurrentDirectory())
+            cb.SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))
                 .AddJsonFile("appsettings.json", false, false);
             IConfiguration config = cb.Build();
             string connectionString = string.Empty;

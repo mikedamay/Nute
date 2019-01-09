@@ -16,6 +16,7 @@ create view BodyType_v
     from BodyType
 go
 
+IF NOT EXISTS (SELECT NULL FROM SYS.EXTENDED_PROPERTIES WHERE [major_id] = OBJECT_ID('Nutrient') AND [name] = N'MS_Description' AND [minor_id] = (SELECT [column_id] FROM SYS.COLUMNS WHERE [name] = 'Subsidiary' AND [object_id] = OBJECT_ID('Nutrient')))
 EXEC sp_addextendedproperty 
     @name = N'MS_Description', @value = 'subsidiary nutrients (e.g. saturated fats) would not be included in any calculation of an ingredients weight - if we actually did that',
     @level0type = N'Schema', @level0name = 'dbo',
@@ -51,6 +52,21 @@ EXEC sp_dropextendedproperty
 go
 
 drop view Ingredient_v
+go
+";
+
+        private static string mealtimeValueLongevityUpScript = @"
+create table Longevity (
+    [Code] int not null,
+    [Description] nvarchar(50) not null,
+    constraint [PK_Longevity] primary key ([Code]),
+    constraint [AK_Longevity_Description] unique ([Description]) 
+)
+go
+";
+
+        public static string mealtimeValueLongevityDownScript = @"
+drop table Longevity
 go
 ";
     }

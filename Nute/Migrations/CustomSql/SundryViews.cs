@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Nute.Entities;
 
 /*
     Migrations Workflow (incl. Custom Migrations)
@@ -29,11 +31,21 @@
          ke "migrations remove" and "database update 0" should work well.
     
     Changes to custom scripts:
+    2.0. Do not touch at any stage the dated migration scripts in Migrations/CustomSql
+         20181203085019_custom.cs and its cognate or CustomSqlDbContextModelSnapshot.cs
     3.1. execute "dotnet ef database update --context CustomSqlDbContext 0"
         check: views created by the script should no longer be present in the Nutrition database 
     3.2. Make changes to migrations/CustomSql/Scripts.cs. to add or remove views
     3.3. execute "dotnet ef database update --context CustomSqlContext"
-        check: views created by the script should now be present in the Nutrition database 
+        check: views created by the script should now be present in the Nutrition database
+        
+        if you ever need to regenerate the date migration scripts then the command line
+        is "C:\projects\Nute\Nute>dotnet ef migrations add custom --context CustomSqlDbContext --output-dir Migrations/CustomSql"
+        after executing that you then need to add in the lines
+        SundryViews.Up(migrationBuilder);
+        and
+        SundryViews.Down(migrationBuilder);
+        in the Up and Down methods of <date>_custom.cs
 
     NOTE:
     A. Before committing, always ensure that there is a valid version of
@@ -54,11 +66,23 @@ namespace Nute.Migrations.CustomSql
         internal static void Up(MigrationBuilder mib)
         {
             mib.Sql(upScript);
+            AddMealTimeValueLongevityTable(mib);
+        }
+
+        private static void AddMealTimeValueLongevityTable(MigrationBuilder mib)
+        {
+            mib.Sql(mealtimeValueLongevityUpScript);
+            var template = "insert into Longevity([Code],[Description]) values({0}, '{1}'){2}go";
+            foreach (var e in Enum.GetValues(typeof(MealTimeValueLongevity)))
+            {
+                mib.Sql(string.Format(template, (int)e, e.ToString(), Environment.NewLine));
+            }
         }
 
         internal static void Down(MigrationBuilder mib)
         {
             mib.Sql(downScript);
+            mib.Sql(mealtimeValueLongevityDownScript);
         }
     }
 }
