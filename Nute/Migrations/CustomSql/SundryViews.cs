@@ -18,7 +18,8 @@ using Nute.Entities;
     1.2. remove any migrations generated from model (i.e. any migrations that are direct
        children of the Migrations directory) that happen to be hanging about.  Do not
        remove any files in the Migrations/CustomSql directory.
-    1.3. remove NutritionDbContextModelSnapshot (because this is a book mark
+    1.3. delete the entire contents of NutritionDbContextModelSnapshot 
+       but leave the empty file in place so that git is happy (because this is a book mark
        for the current state of of migrations generated from model - we need that to be empty)
     1.4. execute "dotnet ef migrations add --context NutritionDbContext start" 
        - to generate migrations from model
