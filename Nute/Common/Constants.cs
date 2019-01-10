@@ -11,5 +11,6 @@ namespace Nute.Common
         public const string Token = "Token";
         public const string Active = "Active";
         public const string BodyTypeId = "BodyTypeId";
+        public const string StdDecimalSpec = "decimal(18,4)";
     }
 }

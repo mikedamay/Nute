@@ -14,7 +14,8 @@ namespace Nute
             var os = new StdOSDetector().DetectOS();
             IConfigurationBuilder cb = new ConfigurationBuilder();
             cb.SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))
-                .AddJsonFile("appsettings.json", false, false);
+                .AddJsonFile("appsettings.json", false, false)
+                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", true, false);
             IConfiguration config = cb.Build();
             string connectionString = string.Empty;
             switch (os)
@@ -32,7 +33,8 @@ namespace Nute
                 case Os.Any:
                     throw new InvalidOperationException("what's going on - unknown OS?");
             }
-            ob.UseSqlServer(connectionString).EnableSensitiveDataLogging();
+            ob.UseSqlServer(connectionString).EnableSensitiveDataLogging(
+              Boolean.Parse(config["EnableDataSensitiveLogging"]));
         }
     }
 }

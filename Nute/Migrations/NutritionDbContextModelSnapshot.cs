@@ -54,13 +54,15 @@ namespace Nute.Migrations
                     b.Property<long?>("NutrientId");
 
                     b.Property<decimal>("_quantityCount")
-                        .HasColumnName("QuantityCount");
+                        .HasColumnName("QuantityCount")
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<long>("_quantityUnitId")
                         .HasColumnName("QuantityUnitId");
 
                     b.Property<decimal>("_servingSizeCount")
-                        .HasColumnName("servingSizeCount");
+                        .HasColumnName("servingSizeCount")
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<long>("_servingSizeUnitId")
                         .HasColumnName("ServingSizeUnitId");
@@ -93,7 +95,8 @@ namespace Nute.Migrations
                         .HasMaxLength(10);
 
                     b.Property<decimal>("_servingSizeCount")
-                        .HasColumnName("servingSizeCount");
+                        .HasColumnName("servingSizeCount")
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<long>("_servingSizeUnitId")
                         .HasColumnName("ServingSizeUnitId");
@@ -265,7 +268,7 @@ namespace Nute.Migrations
                     b.ToTable("Version");
 
                     b.HasData(
-                        new { Id = 1L, SequenceNumber = 1, StartDate = new DateTime(2019, 1, 9, 0, 0, 0, 0, DateTimeKind.Local) }
+                        new { Id = 1L, SequenceNumber = 1, StartDate = new DateTime(2019, 1, 10, 0, 0, 0, 0, DateTimeKind.Local) }
                     );
                 });
 

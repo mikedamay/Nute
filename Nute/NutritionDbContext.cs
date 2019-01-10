@@ -67,7 +67,8 @@ namespace Nute
         {
             mb.Entity<Ingredient>()
                 .Property("_servingSizeCount")
-                .HasColumnName("servingSizeCount");
+                .HasColumnName("servingSizeCount")
+                .HasColumnType(Constants.StdDecimalSpec);
             mb.Entity<Ingredient>()
                 .HasOne<Unit>("_servingSizeUnit")
                 .WithMany();
@@ -91,7 +92,8 @@ namespace Nute
         {
             mb.Entity<Constituent>()
                 .Property("_quantityCount")
-                .HasColumnName("QuantityCount");
+                .HasColumnName("QuantityCount")
+                .HasColumnType(Constants.StdDecimalSpec);
             mb.Entity<Constituent>()
                 .Property("_quantityUnitId")
                 .HasColumnName("QuantityUnitId");
@@ -105,7 +107,8 @@ namespace Nute
                 .OnDelete(DeleteBehavior.ClientSetNull);
             mb.Entity<Constituent>()
                 .Property("_servingSizeCount")
-                .HasColumnName("servingSizeCount");
+                .HasColumnName("servingSizeCount")
+                .HasColumnType(Constants.StdDecimalSpec);
             mb.Entity<Constituent>()
                 .Property("_servingSizeUnitId")
                 .HasColumnName("ServingSizeUnitId");
