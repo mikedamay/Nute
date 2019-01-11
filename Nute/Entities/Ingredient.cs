@@ -38,7 +38,7 @@ namespace Nute.Entities
         public string Name { get; private set; }
         public IEnumerable<Constituent> Constituents { get; private set; } 
           = new List<Constituent>();
-        public IEnumerable<MealIngredient> Meals { get; set; }
+//        public IEnumerable<MealIngredient> Meals { get; set; }
         
         #region ServingSize
         [NotMapped]

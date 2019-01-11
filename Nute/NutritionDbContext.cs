@@ -61,7 +61,8 @@ namespace Nute
             CreateUser(mb);
             CreateConstituent(mb);
             CreateIngredient(mb);
-            CreateMealIngredient(mb);
+//            CreateMealIngredient(mb);
+            CreateMeal(mb);
             SeedData(mb);
         }
 
@@ -182,6 +183,7 @@ namespace Nute
 
         private void CreateMealIngredient(ModelBuilder mb)
         {
+/*
             mb.Entity<MealIngredient>()
                 .HasKey(mi => new {mi.MealId, mi.IngredientId}  );
             mb.Entity<MealIngredient>()
@@ -190,6 +192,15 @@ namespace Nute
             mb.Entity<MealIngredient>()
                 .HasOne<Ingredient>().WithMany(i => i.Meals)
                 .HasForeignKey(mi => mi.IngredientId);
+*/
+        }
+
+        private void CreateMeal(ModelBuilder mb)
+        
+        {
+            mb.Entity<Serving>()
+                .HasOne<Meal>()
+                .WithMany(m => m.Servings);
         }
 
         private void SeedData(ModelBuilder mb)
@@ -237,6 +248,14 @@ namespace Nute
                         ,_servingSizeCount = 125m, _servingSizeUnitId = 1L
                     }
                     );
+            mb.Entity<Serving>()
+                .HasData(
+                    new
+                    {
+                        Id = 1L, IngredientId = 1L, MealId = 1L
+                        ,_quantityCount = 125m, _quantityUnitId = 1L
+                    }
+                );
             mb.Entity<Constituent>()
                 .HasData(
                     new {Id = 1L, NutrientId = 1L
@@ -256,6 +275,7 @@ namespace Nute
         public DbSet<Ingredient> Ingredient { get; set; }
         public DbSet<Meal> Meal { get; set; }
         public DbSet<MealTime> MealTime { get; set; }
+        public DbSet<ScheduledMeal> ScheduledMeal { get; set; }
     }
 
     public class OptionsFactory<T> : IOptionsFactory<T> where T : class, new()

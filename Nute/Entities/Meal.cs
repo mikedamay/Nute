@@ -10,8 +10,8 @@ namespace Nute.Entities
         }
         public long Id { get; private set; }
         public MealTime MealTime { get; private set; }
-        public List<MealIngredient> Ingredients { get; }
-          = new List<MealIngredient>();
+        public List<Serving> Servings { get; }
+          = new List<Serving>();
         public Meal(MealTime mealTime, long id = 0)
         {
             Id = id;

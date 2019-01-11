@@ -143,19 +143,6 @@ namespace Nute.Migrations
                     );
                 });
 
-            modelBuilder.Entity("Nute.Entities.MealIngredient", b =>
-                {
-                    b.Property<long>("MealId");
-
-                    b.Property<long>("IngredientId");
-
-                    b.HasKey("MealId", "IngredientId");
-
-                    b.HasIndex("IngredientId");
-
-                    b.ToTable("MealIngredient");
-                });
-
             modelBuilder.Entity("Nute.Entities.MealTime", b =>
                 {
                     b.Property<long>("Id")
@@ -222,6 +209,49 @@ namespace Nute.Migrations
                         new { Id = 13L, Name = "Folic Acid (B9)", ShortCode = "B9", Subsidiary = false },
                         new { Id = 14L, Name = "Vitamin B12", ShortCode = "B12", Subsidiary = false },
                         new { Id = 15L, Name = "Iron", ShortCode = "IRON", Subsidiary = false }
+                    );
+                });
+
+            modelBuilder.Entity("Nute.Entities.ScheduledMeal", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Eaten");
+
+                    b.Property<DateTime>("EatenOn")
+                        .HasColumnType("date");
+
+                    b.Property<long>("MealId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MealId");
+
+                    b.ToTable("ScheduledMeal");
+                });
+
+            modelBuilder.Entity("Nute.Entities.Serving", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long>("IngredientId");
+
+                    b.Property<long?>("MealId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IngredientId");
+
+                    b.HasIndex("MealId");
+
+                    b.ToTable("Serving");
+
+                    b.HasData(
+                        new { Id = 1L, IngredientId = 1L, MealId = 1L }
                     );
                 });
 
@@ -339,17 +369,24 @@ namespace Nute.Migrations
                         .HasForeignKey("MealTimeId");
                 });
 
-            modelBuilder.Entity("Nute.Entities.MealIngredient", b =>
+            modelBuilder.Entity("Nute.Entities.ScheduledMeal", b =>
                 {
-                    b.HasOne("Nute.Entities.Ingredient")
-                        .WithMany("Meals")
+                    b.HasOne("Nute.Entities.Meal", "Meal")
+                        .WithMany()
+                        .HasForeignKey("MealId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Nute.Entities.Serving", b =>
+                {
+                    b.HasOne("Nute.Entities.Ingredient", "Ingredient")
+                        .WithMany()
                         .HasForeignKey("IngredientId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Nute.Entities.Meal")
-                        .WithMany("Ingredients")
-                        .HasForeignKey("MealId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany("Servings")
+                        .HasForeignKey("MealId");
                 });
 #pragma warning restore 612, 618
         }
