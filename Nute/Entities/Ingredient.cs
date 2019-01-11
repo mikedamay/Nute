@@ -38,6 +38,7 @@ namespace Nute.Entities
         public string Name { get; private set; }
         public IEnumerable<Constituent> Constituents { get; private set; } 
           = new List<Constituent>();
+        public IEnumerable<MealIngredient> Meals { get; set; }
         
         #region ServingSize
         [NotMapped]
@@ -50,6 +51,7 @@ namespace Nute.Entities
                 _servingSizeUnit = value.Unit;
             }
         }
+
         private decimal _servingSizeCount;
 #pragma warning disable 169
         private long _servingSizeUnitId;

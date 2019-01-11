@@ -72,7 +72,7 @@ namespace Nute.Migrations.CustomSql
 
         private static void AddMealTimeValueLongevityTable(MigrationBuilder mib)
         {
-            mib.Sql(mealtimeValueLongevityUpScript);
+            mib.Sql(longevityUpScript);
             var template = "insert into Longevity([Code],[Description]) values({0}, '{1}'){2}go";
             foreach (var e in Enum.GetValues(typeof(MealTimeValueLongevity)))
             {
@@ -83,7 +83,7 @@ namespace Nute.Migrations.CustomSql
         internal static void Down(MigrationBuilder mib)
         {
             mib.Sql(downScript);
-            mib.Sql(mealtimeValueLongevityDownScript);
+            mib.Sql(longevityDownScript);
         }
     }
 }

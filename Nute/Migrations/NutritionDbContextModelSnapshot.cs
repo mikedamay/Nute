@@ -49,9 +49,10 @@ namespace Nute.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("IngredientId");
+                    b.Property<long?>("IngredientId")
+                        .IsRequired();
 
-                    b.Property<long?>("NutrientId");
+                    b.Property<long>("NutrientId");
 
                     b.Property<decimal>("_quantityCount")
                         .HasColumnName("QuantityCount")
@@ -61,7 +62,7 @@ namespace Nute.Migrations
                         .HasColumnName("QuantityUnitId");
 
                     b.Property<decimal>("_servingSizeCount")
-                        .HasColumnName("servingSizeCount")
+                        .HasColumnName("ServingSizeCount")
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<long>("_servingSizeUnitId")
@@ -78,6 +79,10 @@ namespace Nute.Migrations
                     b.HasIndex("_servingSizeUnitId");
 
                     b.ToTable("Constituent");
+
+                    b.HasData(
+                        new { Id = 1L, IngredientId = 1L, NutrientId = 1L, _quantityCount = 100m, _quantityUnitId = 1L, _servingSizeCount = 125m, _servingSizeUnitId = 1L }
+                    );
                 });
 
             modelBuilder.Entity("Nute.Entities.Ingredient", b =>
@@ -95,7 +100,7 @@ namespace Nute.Migrations
                         .HasMaxLength(10);
 
                     b.Property<decimal>("_servingSizeCount")
-                        .HasColumnName("servingSizeCount")
+                        .HasColumnName("ServingSizeCount")
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<long>("_servingSizeUnitId")
@@ -113,6 +118,10 @@ namespace Nute.Migrations
                     b.HasIndex("_servingSizeUnitId");
 
                     b.ToTable("Ingredient");
+
+                    b.HasData(
+                        new { Id = 1L, Name = "Bran Flakes", ShortCode = "BRNFL", _servingSizeCount = 125m, _servingSizeUnitId = 1L }
+                    );
                 });
 
             modelBuilder.Entity("Nute.Entities.Meal", b =>
@@ -128,6 +137,23 @@ namespace Nute.Migrations
                     b.HasIndex("MealTimeId");
 
                     b.ToTable("Meal");
+
+                    b.HasData(
+                        new { Id = 1L, MealTimeId = 1L }
+                    );
+                });
+
+            modelBuilder.Entity("Nute.Entities.MealIngredient", b =>
+                {
+                    b.Property<long>("MealId");
+
+                    b.Property<long>("IngredientId");
+
+                    b.HasKey("MealId", "IngredientId");
+
+                    b.HasIndex("IngredientId");
+
+                    b.ToTable("MealIngredient");
                 });
 
             modelBuilder.Entity("Nute.Entities.MealTime", b =>
@@ -145,6 +171,12 @@ namespace Nute.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MealTime");
+
+                    b.HasData(
+                        new { Id = 1L, Longevity = 1, Name = "Breakfast" },
+                        new { Id = 2L, Longevity = 1, Name = "Lunch" },
+                        new { Id = 3L, Longevity = 1, Name = "Dinner" }
+                    );
                 });
 
             modelBuilder.Entity("Nute.Entities.Nutrient", b =>
@@ -268,7 +300,7 @@ namespace Nute.Migrations
                     b.ToTable("Version");
 
                     b.HasData(
-                        new { Id = 1L, SequenceNumber = 1, StartDate = new DateTime(2019, 1, 10, 0, 0, 0, 0, DateTimeKind.Local) }
+                        new { Id = 1L, SequenceNumber = 1, StartDate = new DateTime(2019, 1, 11, 0, 0, 0, 0, DateTimeKind.Local) }
                     );
                 });
 
@@ -281,7 +313,8 @@ namespace Nute.Migrations
 
                     b.HasOne("Nute.Entities.Nutrient", "Nutrient")
                         .WithMany()
-                        .HasForeignKey("NutrientId");
+                        .HasForeignKey("NutrientId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Nute.Entities.Unit", "_quantityUnit")
                         .WithMany()
@@ -296,8 +329,7 @@ namespace Nute.Migrations
                 {
                     b.HasOne("Nute.Entities.Unit", "_servingSizeUnit")
                         .WithMany()
-                        .HasForeignKey("_servingSizeUnitId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("_servingSizeUnitId");
                 });
 
             modelBuilder.Entity("Nute.Entities.Meal", b =>
@@ -305,6 +337,19 @@ namespace Nute.Migrations
                     b.HasOne("Nute.Entities.MealTime", "MealTime")
                         .WithMany()
                         .HasForeignKey("MealTimeId");
+                });
+
+            modelBuilder.Entity("Nute.Entities.MealIngredient", b =>
+                {
+                    b.HasOne("Nute.Entities.Ingredient")
+                        .WithMany("Meals")
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Nute.Entities.Meal")
+                        .WithMany("Ingredients")
+                        .HasForeignKey("MealId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

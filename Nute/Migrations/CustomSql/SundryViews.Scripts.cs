@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Nute.Migrations.CustomSql
 {
     public static partial class SundryViews
@@ -55,7 +57,7 @@ drop view Ingredient_v
 go
 ";
 
-        private static string mealtimeValueLongevityUpScript = @"
+private static string longevityUpScript = @"
 create table Longevity (
     [Code] int not null,
     [Description] nvarchar(50) not null,
@@ -65,9 +67,23 @@ create table Longevity (
 go
 ";
 
-        public static string mealtimeValueLongevityDownScript = @"
+private static string mealtimeLongevityFKUpScript = @"
+alter table MealTime
+  add constraint FK_MealTime_Longevity foreign key (Longevity) references Longevity
+go
+";        
+        
+        
+public static string longevityDownScript = @"
 drop table Longevity
 go
 ";
+
+private static string mealtimeLongevityFKDownScript = @"
+alter table MealTime
+  drop constraint FK_MealTime_Longevity
+go
+";        
+        
     }
 }

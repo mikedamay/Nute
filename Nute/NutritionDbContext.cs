@@ -61,18 +61,21 @@ namespace Nute
             CreateUser(mb);
             CreateConstituent(mb);
             CreateIngredient(mb);
+            CreateMealIngredient(mb);
+            SeedData(mb);
         }
 
         private void CreateIngredient(ModelBuilder mb)
         {
             mb.Entity<Ingredient>()
                 .Property("_servingSizeCount")
-                .HasColumnName("servingSizeCount")
+                .HasColumnName("ServingSizeCount")
                 .HasColumnType(Constants.StdDecimalSpec);
             mb.Entity<Ingredient>()
                 .HasOne<Unit>("_servingSizeUnit")
-                .WithMany();
-            mb.Entity<Ingredient>()
+                .WithMany()
+                .OnDelete(DeleteBehavior.ClientSetNull);
+           mb.Entity<Ingredient>()
                 .HasAlternateKey(i => i.ShortCode)
                 .HasName("AK_Ingredient_ShortCode");
             mb.Entity<Ingredient>()
@@ -85,6 +88,8 @@ namespace Nute
             mb.Entity<Ingredient>()
                 .HasMany(ii => ii.Constituents)
                 .WithOne()
+                .HasForeignKey("IngredientId")
+                .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
         }
 
@@ -104,10 +109,12 @@ namespace Nute
                 // property and make that the FK rather than
                 // using QuantityUnitId
                 // ditto for ServingSize and Ingredient.ServingSize
+                // It must insist on inferring the FK name
+                // from the navigation property name
                 .OnDelete(DeleteBehavior.ClientSetNull);
             mb.Entity<Constituent>()
                 .Property("_servingSizeCount")
-                .HasColumnName("servingSizeCount")
+                .HasColumnName("ServingSizeCount")
                 .HasColumnType(Constants.StdDecimalSpec);
             mb.Entity<Constituent>()
                 .Property("_servingSizeUnitId")
@@ -135,23 +142,6 @@ namespace Nute
             mb.Entity<Nutrient>()
                 .HasAlternateKey(n => n.Name)
                 .HasName("AK_Nutrient_Name");
-            mb.Entity<Nutrient>().HasData(
-                new Nutrient (id : 1, shortCode : TestConstants.EnergySC, name : TestConstants.Energy)
-                , new Nutrient (id : 2, shortCode : TestConstants.FatSC, name : TestConstants.Fat)
-                , new Nutrient (id : 3, shortCode : TestConstants.SaturatedFatSC, name : TestConstants.SaturatedFat, subsidiary: true)
-                , new Nutrient (id : 4, shortCode : TestConstants.CarbohydrateSC, name : TestConstants.Carbohydrate)
-                , new Nutrient (id : 5, shortCode : TestConstants.SugarsSC, name : TestConstants.Sugars, subsidiary: true)
-                , new Nutrient (id : 6, shortCode : TestConstants.FibreSC, name : TestConstants.Fibre)
-                , new Nutrient (id : 7, shortCode : TestConstants.ProteinSC, name : TestConstants.Protein)
-                , new Nutrient (id : 8, shortCode : TestConstants.SaltSC, name : TestConstants.Salt)
-                , new Nutrient (id : 9, shortCode : TestConstants.ThiaminSC, name : TestConstants.Thiamin)
-                , new Nutrient (id : 10, shortCode : TestConstants.RiboflavinSC, name : TestConstants.Riboflavin)
-                , new Nutrient (id : 11, shortCode : TestConstants.NiacinSC, name : TestConstants.Niacin)
-                , new Nutrient (id : 12, shortCode : TestConstants.VitaminB6SC, name : TestConstants.VitaminB6)
-                , new Nutrient (id : 13, shortCode : TestConstants.FolicAcidSC, name : TestConstants.FolicAcid)
-                , new Nutrient (id : 14, shortCode : TestConstants.VitaminB12SC, name : TestConstants.VitaminB12)
-                , new Nutrient (id : 15, shortCode : TestConstants.IronSC, name : TestConstants.Iron)
-            );
         }
 
         private void CreateUnit(ModelBuilder mb)
@@ -171,14 +161,6 @@ namespace Nute
                 .HasAlternateKey("Abbrev")
                 .HasName("AK_Unit_Abbrev");
            
-            mb.Entity<Unit>().HasData(
-                new {Id = 1L, Name = "gram", Abbrev = Nute.Entities.Unit.GRAM}
-                ,new {Id = 2L, Name = "each", Abbrev = Nute.Entities.Unit.EACH}
-                ,new {Id = 3L, Name = "large", Abbrev = Nute.Entities.Unit.LGE}
-                ,new {Id = 4L, Name = "calorie", Abbrev = Nute.Entities.Unit.KCAL}
-                ,new {Id = 5L, Name = "milligram", Abbrev = Nute.Entities.Unit.MILLIGRAM}
-                ,new {Id = 6L, Name = "micro-gram", Abbrev = Nute.Entities.Unit.MICROGRAM}
-            );
         }
 
         private void CreateVersion(ModelBuilder mb)
@@ -196,6 +178,73 @@ namespace Nute
             mb.Entity<User>()
                 .HasData(new User(id: 1, token: "magic1"))
                 ;
+        }
+
+        private void CreateMealIngredient(ModelBuilder mb)
+        {
+            mb.Entity<MealIngredient>()
+                .HasKey(mi => new {mi.MealId, mi.IngredientId}  );
+            mb.Entity<MealIngredient>()
+                .HasOne<Meal>().WithMany(m => m.Ingredients)
+                .HasForeignKey(mi => mi.MealId);
+            mb.Entity<MealIngredient>()
+                .HasOne<Ingredient>().WithMany(i => i.Meals)
+                .HasForeignKey(mi => mi.IngredientId);
+        }
+
+        private void SeedData(ModelBuilder mb)
+        {
+             mb.Entity<Nutrient>().HasData(
+                new Nutrient (id : 1, shortCode : TestConstants.EnergySC, name : TestConstants.Energy)
+                , new Nutrient (id : 2, shortCode : TestConstants.FatSC, name : TestConstants.Fat)
+                , new Nutrient (id : 3, shortCode : TestConstants.SaturatedFatSC, name : TestConstants.SaturatedFat, subsidiary: true)
+                , new Nutrient (id : 4, shortCode : TestConstants.CarbohydrateSC, name : TestConstants.Carbohydrate)
+                , new Nutrient (id : 5, shortCode : TestConstants.SugarsSC, name : TestConstants.Sugars, subsidiary: true)
+                , new Nutrient (id : 6, shortCode : TestConstants.FibreSC, name : TestConstants.Fibre)
+                , new Nutrient (id : 7, shortCode : TestConstants.ProteinSC, name : TestConstants.Protein)
+                , new Nutrient (id : 8, shortCode : TestConstants.SaltSC, name : TestConstants.Salt)
+                , new Nutrient (id : 9, shortCode : TestConstants.ThiaminSC, name : TestConstants.Thiamin)
+                , new Nutrient (id : 10, shortCode : TestConstants.RiboflavinSC, name : TestConstants.Riboflavin)
+                , new Nutrient (id : 11, shortCode : TestConstants.NiacinSC, name : TestConstants.Niacin)
+                , new Nutrient (id : 12, shortCode : TestConstants.VitaminB6SC, name : TestConstants.VitaminB6)
+                , new Nutrient (id : 13, shortCode : TestConstants.FolicAcidSC, name : TestConstants.FolicAcid)
+                , new Nutrient (id : 14, shortCode : TestConstants.VitaminB12SC, name : TestConstants.VitaminB12)
+                , new Nutrient (id : 15, shortCode : TestConstants.IronSC, name : TestConstants.Iron)
+            );
+            mb.Entity<Unit>().HasData(
+               new {Id = 1L, Name = "gram", Abbrev = Nute.Entities.Unit.GRAM}
+                ,new {Id = 2L, Name = "each", Abbrev = Nute.Entities.Unit.EACH}
+                ,new {Id = 3L, Name = "large", Abbrev = Nute.Entities.Unit.LGE}
+                ,new {Id = 4L, Name = "calorie", Abbrev = Nute.Entities.Unit.KCAL}
+                ,new {Id = 5L, Name = "milligram", Abbrev = Nute.Entities.Unit.MILLIGRAM}
+                ,new {Id = 6L, Name = "micro-gram", Abbrev = Nute.Entities.Unit.MICROGRAM}
+            );
+           mb.Entity<MealTime>()
+                .HasData(
+                    new {Id = 1L, Name = "Breakfast", Longevity = MealTimeValueLongevity.System},
+                    new {Id = 2L, Name = "Lunch", Longevity = MealTimeValueLongevity.System},
+                    new {Id = 3L, Name = "Dinner", Longevity = MealTimeValueLongevity.System}
+                );
+            mb.Entity<Meal>()
+                .HasData(
+                    new {Id = 1L, MealTimeId = 1L }
+                );
+            mb.Entity<Ingredient>()
+                .HasData(
+                    new
+                    {
+                        Id = 1L, ShortCode = "BRNFL", Name = "Bran Flakes"
+                        ,_servingSizeCount = 125m, _servingSizeUnitId = 1L
+                    }
+                    );
+            mb.Entity<Constituent>()
+                .HasData(
+                    new {Id = 1L, NutrientId = 1L
+                      , _quantityCount = 100m, _quantityUnitId = 1L, IngredientId = 1L
+                      , _servingSizeCount = 125m, _servingSizeUnitId = 1L
+                      }
+                );
+
         }
 
         public DbSet<Nutrient> Nutrient { get; set; }

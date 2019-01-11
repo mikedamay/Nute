@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Nute.Entities
@@ -17,6 +18,7 @@ namespace Nute.Entities
             Id = id;
         }
         public long Id { get; private set; }
+        [Required]
         public Nutrient Nutrient { get; private set; }
 
         #region Quantity
